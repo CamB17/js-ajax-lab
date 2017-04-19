@@ -1,50 +1,54 @@
-var $catList = $('#cats');
+
+console.log("js is working");
+// var cats = $('#cats').attr('id');
+var cats = document.getElementById('cats');
+var catname = $('#cat-name').val();
+var catnote = $('#cat-note').val();
 
 
-$.ajax({
-  method: 'GET',
-  url: 'https://ga-cat-rescue.herokuapp.com/api/cats'
-})
-.done(function(data) {
-        // console.log(data);
-        var obj = JSON.parse(data);
-        // console.log(obj);
-        for (var i = 0; i < obj.length; i++) {
-          var catli = document.createElement('li');
-          catli.innerHTML = obj[i].name + "-" + obj[i].note;
-          $catList.append(catli);        
-        }
+function makeResults() {
+  var results = document.createElement('li');
+  // results.innerHTML = 'Cats';
+  results.className = 'results';
+  cats.appendChild(results);
+}
+
+
+$("form").on("submit", function(event){
+  event.preventDefault();
+  makeResults();
+
+  var ajax = $.get('https://ga-cat-rescue.herokuapp.com/api/cats')
+    .done(function(data){
+      var allCats = JSON.parse(data);
+      for (var i = 0; i < allCats.length; i++) {
+        var catList = document.createElement('li');
+
+        catList.append(allCats[i].name + " - " + allCats[i].note);
+        cats.append(catList);
+        // console.log(separateCats[0]);
+      }
+    // console.log(data);
     });
 
-$("#new-cat").submit(function(event) {
-
-  event.preventDefault();
-
-  var name = $('#cat-name').val();
-  console.log(name);
-  var note = $('#cat-note').val();
-  console.log(note);
-
+  var newlist = document.createElement('li');
+  var catname = $('#cat-name').val();
+  var catnote = $('#cat-note').val();
+  newlist.append(catname + " - " + catnote);
+  $('.results').append(newlist);
   var newCat = {
-    name: name,
-    note: note,
+    "name": catname,
+    "note": catnote
   };
-
-  var catString = JSON.stringify(newCat);
+  
+  // console.log(newCat);
+  var newCatString = JSON.stringify(newCat);
+  console.log(newCatString);
 
   $.ajax({
-    method: 'POST',
     url: 'https://ga-cat-rescue.herokuapp.com/api/cats',
-    data: catString
-  });
-  
-  $.get('https://ga-cat-rescue.herokuapp.com/api/cats')
-  .done(function(data) {
-    var newObj = JSON.parse(data);
-    var addCat = newObj.pop();
-    $catList.prepend('<li>' + addCat.name + "-" + addCat.note + '</li>'); 
-  event.preventDefault();
-  
+    type: 'POST',
+    data: newCatString
   });
 
 });
