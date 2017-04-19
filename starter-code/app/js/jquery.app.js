@@ -37,11 +37,14 @@ $("#new-cat").submit(function(event) {
     url: 'https://ga-cat-rescue.herokuapp.com/api/cats',
     data: catString
   });
+  
   $.get('https://ga-cat-rescue.herokuapp.com/api/cats')
   .done(function(data) {
     var newObj = JSON.parse(data);
     var addCat = newObj.pop();
     $catList.prepend('<li>' + addCat.name + "-" + addCat.note + '</li>'); 
+  event.preventDefault();
+  
   });
 
 });
